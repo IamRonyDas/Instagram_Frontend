@@ -9,13 +9,18 @@
 
 .bottom-nav__item {
   flex: 1;
-  padding: 0.85rem 1rem;
+  padding: 0.65rem 0.5rem;
   text-align: center;
-  font-size: 0.9rem;
+  font-size: 0.75rem;
   font-weight: 500;
   color: var(--text-muted);
   text-decoration: none;
   transition: color 0.2s ease, background 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15rem;
 }
 
 .bottom-nav__item:hover {
@@ -27,4 +32,30 @@
   color: var(--text-primary);
   font-weight: 600;
   box-shadow: inset 0 -2px 0 var(--text-primary);
+}
+
+.bottom-nav__item--icon .bottom-nav__fire {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.bottom-nav__label {
+  position: relative;
+  display: inline-block;
+}
+
+.bottom-nav__badge {
+  position: absolute;
+  top: -8px;
+  right: -14px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  background: var(--danger);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  line-height: 16px;
+  text-align: center;
 }

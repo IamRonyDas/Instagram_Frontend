@@ -17,12 +17,47 @@
   padding: 1rem 1.25rem 0.5rem;
 }
 
+.profile-page__avatar-btn {
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: default;
+  flex-shrink: 0;
+  line-height: 0;
+}
+
+.profile-page__avatar-btn:not(:disabled) {
+  cursor: pointer;
+}
+
+.profile-page__avatar-btn:not(:disabled):hover .profile-page__avatar {
+  opacity: 0.85;
+}
+
 .profile-page__avatar {
   width: 86px;
   height: 86px;
   border-radius: 50%;
   object-fit: cover;
-  flex-shrink: 0;
+}
+
+.profile-page__grid-item {
+  padding: 0;
+  border: none;
+  cursor: pointer;
+  background: var(--bg-secondary);
+}
+
+.profile-page__grid-item:hover {
+  opacity: 0.9;
+}
+
+.profile-page__empty-grid {
+  grid-column: 1 / -1;
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
 }
 
 .profile-page__stats {
@@ -150,10 +185,9 @@
   gap: 2px;
 }
 
-.profile-page__grid-item {
+.profile-page__grid .profile-page__grid-item {
   aspect-ratio: 1 / 1;
   overflow: hidden;
-  background: var(--bg-secondary);
 }
 
 .profile-page__grid-item img {

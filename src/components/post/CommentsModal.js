@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAppData } from '../../context/AppDataContext';
-import { getUser } from '../../data/mockUsers';
 import './CommentsModal.css';
 
 function CommentsModal({ post, onClose }) {
-  const { addComment, currentUsername } = useAppData();
+  const { addComment, currentUsername, getUser } = useAppData();
   const [text, setText] = useState('');
 
   if (!post) return null;

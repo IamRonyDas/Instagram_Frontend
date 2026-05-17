@@ -98,3 +98,10 @@
   object-fit: cover;
   border-radius: 4px;
 }
+
+.notifications-page__empty {
+  padding: 3rem 1rem;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}

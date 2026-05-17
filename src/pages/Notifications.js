@@ -1,16 +1,16 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import PageHeader from '../components/layout/PageHeader';
 import BottomNav from '../components/layout/BottomNav';
-import { mockNotifications, notificationSections } from '../data/mockNotifications';
-import { getUser } from '../data/mockUsers';
+import { notificationSections } from '../data/mockNotifications';
 import { useAppData } from '../context/AppDataContext';
 import './Notifications.css';
 
 function NotificationItem({ notification }) {
+  const { getUser, toggleFollow, isFollowing } = useAppData();
   const user = getUser(notification.username);
-  const { toggleFollow, isFollowing } = useAppData();
   const following = isFollowing(notification.username);
+  const isYouAction = notification.message.startsWith('You ');
 
   return (
     <div className={`notification-item${notification.isNew ? ' notification-item--new' : ''}`}>
@@ -23,9 +23,12 @@ function NotificationItem({ notification }) {
       </Link>
       <div className="notification-item__content">
         <p className="notification-item__text">
-          <Link to={`/profile/${notification.username}`} className="notification-item__user">
-            {notification.username}
-          </Link>{' '}
+          {!isYouAction && (
+            <Link to={`/profile/${notification.username}`} className="notification-item__user">
+              {notification.username}
+            </Link>
+          )}
+          {!isYouAction && ' '}
           {notification.message}
           <span className="notification-item__time"> {notification.time}</span>
         </p>
@@ -53,7 +56,11 @@ function NotificationItem({ notification }) {
 }
 
 function Notifications() {
-  const [notifications] = useState(mockNotifications);
+  const { notifications, markNotificationsRead } = useAppData();
+
+  useEffect(() => {
+    markNotificationsRead();
+  }, [markNotificationsRead]);
 
   return (
     <div className="notifications-page">
@@ -72,6 +79,9 @@ function Notifications() {
             </section>
           );
         })}
+        {notifications.length === 0 && (
+          <p className="notifications-page__empty">No notifications yet.</p>
+        )}
       </div>
 
       <BottomNav />

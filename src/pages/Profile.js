@@ -1,21 +1,44 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import PageHeader from '../components/layout/PageHeader';
+import PostDetailModal from '../components/post/PostDetailModal';
 import { useAppData } from '../context/AppDataContext';
-import { CURRENT_USER_USERNAME, formatCount, getUser } from '../data/mockUsers';
-import { getProfileGrid } from '../data/mockPosts';
+import { CURRENT_USER_USERNAME, formatCount } from '../data/mockUsers';
+import { getStaticProfileGrid } from '../data/mockPosts';
 import './Profile.css';
 
 function Profile() {
   const { username: paramUsername } = useParams();
   const navigate = useNavigate();
-  const { isFollowing, toggleFollow } = useAppData();
+  const { getUser, isFollowing, toggleFollow, getPostsByUser, enrichPost } = useAppData();
 
   const username = paramUsername || CURRENT_USER_USERNAME;
   const user = getUser(username);
   const isOwn = username === CURRENT_USER_USERNAME;
   const following = isFollowing(username);
   const [activeTab, setActiveTab] = useState('posts');
+  const [selectedPost, setSelectedPost] = useState(null);
+
+  const profilePosts = useMemo(() => {
+    if (isOwn) {
+      return getPostsByUser(username);
+    }
+    const staticGrid = getStaticProfileGrid(username);
+    return staticGrid.map((item) =>
+      enrichPost({
+        id: item.id,
+        authorUsername: username,
+        imageUrl: item.imageUrl,
+        caption: item.caption || '',
+        likesCount: 50 + staticGrid.indexOf(item) * 17,
+        likesLast24h: 0,
+        isWithin24h: false,
+        isLiked: false,
+        createdAt: '',
+        comments: [],
+      })
+    );
+  }, [isOwn, username, getPostsByUser, enrichPost]);
 
   if (!user) {
     return (
@@ -26,25 +49,30 @@ function Profile() {
     );
   }
 
-  const gridPosts = getProfileGrid(username);
-
   const handleFollowingTab = () => {
     if (isOwn) navigate('/following');
     else navigate(`/profile/${username}/following`);
   };
 
+  const openEditProfile = () => navigate('/profile/edit');
+
   return (
     <div className="profile-page">
-      <PageHeader
-        title={user.username}
-        backTo={isOwn ? '/' : '/'}
-      />
+      <PageHeader title={user.username} backTo={isOwn ? '/' : '/'} />
 
       <section className="profile-page__top">
-        <img src={user.avatarUrl} alt={user.fullName} className="profile-page__avatar" />
+        <button
+          type="button"
+          className="profile-page__avatar-btn"
+          onClick={isOwn ? openEditProfile : undefined}
+          disabled={!isOwn}
+          aria-label={isOwn ? 'Change profile photo' : undefined}
+        >
+          <img src={user.avatarUrl} alt={user.fullName} className="profile-page__avatar" />
+        </button>
         <div className="profile-page__stats">
           <div className="profile-page__stat">
-            <strong>{formatCount(user.postsCount)}</strong>
+            <strong>{formatCount(isOwn ? profilePosts.length : user.postsCount)}</strong>
             <span>posts</span>
           </div>
           <div className="profile-page__stat">
@@ -74,7 +102,9 @@ function Profile() {
       <section className="profile-page__actions">
         {isOwn ? (
           <>
-            <button type="button" className="profile-page__btn">Edit profile</button>
+            <button type="button" className="profile-page__btn" onClick={openEditProfile}>
+              Edit profile
+            </button>
             <button type="button" className="profile-page__btn">Share profile</button>
           </>
         ) : (
@@ -115,12 +145,31 @@ function Profile() {
 
       {activeTab === 'posts' && (
         <div className="profile-page__grid">
-          {gridPosts.map((post) => (
-            <div key={post.id} className="profile-page__grid-item">
-              <img src={post.imageUrl} alt="" loading="lazy" />
-            </div>
-          ))}
+          {profilePosts.length > 0 ? (
+            profilePosts.map((post) => (
+              <button
+                key={post.id}
+                type="button"
+                className="profile-page__grid-item"
+                onClick={() => setSelectedPost(post)}
+                aria-label="View post"
+              >
+                <img src={post.imageUrl} alt="" loading="lazy" />
+              </button>
+            ))
+          ) : (
+            <p className="profile-page__empty-grid">No posts yet.</p>
+          )}
         </div>
+      )}
+
+      {selectedPost && (
+        <PostDetailModal
+          post={selectedPost}
+          showDelete={isOwn}
+          onClose={() => setSelectedPost(null)}
+          onDeleted={() => setSelectedPost(null)}
+        />
       )}
     </div>
   );
