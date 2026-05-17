@@ -1,0 +1,30 @@
+.bottom-nav {
+  position: sticky;
+  bottom: 0;
+  z-index: 100;
+  display: flex;
+  border-top: 1px solid var(--border);
+  background: var(--bg-primary);
+}
+
+.bottom-nav__item {
+  flex: 1;
+  padding: 0.85rem 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+.bottom-nav__item:hover {
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+
+.bottom-nav__item--active {
+  color: var(--text-primary);
+  font-weight: 600;
+  box-shadow: inset 0 -2px 0 var(--text-primary);
+}

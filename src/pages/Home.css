@@ -1,0 +1,11 @@
+.home-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-primary);
+  padding-bottom: 0;
+}
+
+.home-page__feed {
+  flex: 1;
+}
